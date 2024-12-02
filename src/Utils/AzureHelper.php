@@ -152,7 +152,7 @@ class AzureHelper
         array $excludedAttributes = []
     ) {
         return response(self::objectToSCIMArray($object, $resourceType, $attributes, $excludedAttributes))
-        // Leaving this in causes a loop when getting an object
+            // Leaving this in causes a loop when getting an object
             // ->header('Location', self::objectLocation($object, $resourceType))
             ->setEtag(self::getResourceObjectVersion($object));
     }
@@ -334,7 +334,12 @@ class AzureHelper
             } else {
                 if (empty($attributes) || self::inArrayi($key, $attributes)) {
                     if ($key === "active") {
-                        $result[$key] = ($object->{$value} === true || $object->{$value} === "1") ? true : false;
+                        if ($value == 'deleted_at') {
+                            $result[$key] = ($object->{$value} === null) ? true : false;
+                        } else {
+                            $result[$key] = ($object->{$value} === true || $object->{$value} === "1") ? true : false;
+                        }
+
                     } else {
                         $result[$key] = $object->{$value};
                     }
